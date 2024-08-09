@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+</head>
+<style>
+    #chatbot {
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#chatbot-header {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+#chatbot-body {
+    padding: 20px;
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ddd;
+}
+
+</style>
+<body>
+    <div id="chatbot">
+        <div id="chatbot-header">Chatbot</div>
+        <div id="chatbot-body"></div>
+    </div>
+    <script>
+const chatData = {
+    start: {
+        message: "What language?",
+        type: "options",
+        options: {
+            ENGLISH: "welcome",
+            HINDI: "welcome"
+        }
+    },
+    welcome: {
+        message: "Welcome to our Candle Gifting Company! How can I assist you today?",
+        type: "options",
+        options: {
+            order: "start_order",
+            catalog: "show_catalog",
+            exit: "goodbye",
+        }
+    },
+    show_catalog: {
+        message: "Here is our catalog: \n1. Lavender Candle \n2. Vanilla Candle \n3. Rose Candle",
+        type: "input",
+        options: null
+    },
+    start_order: {
+        message: "Great! What candles would you like to order? (Type 'done' when finished)",
+        type: "input",
+        options: null
+    },
+    confirm_order: {
+        message: "Here's your order summary:",
+        type: "display",
+        next_state: "gift_message"
+    },
+    gift_message: {
+        message: "Would you like to add a gift message?",
+        type: "options",
+        options: { yes: "add_message", no: "delivery_address" }
+    },
+    add_message: {
+        message: "Please enter your gift message:",
+        type: "input",
+        options: null
+    },
+    delivery_address: {
+        message: "Please provide your delivery address:",
+        type: "input",
+        options: null
+    },
+    finalize_order: {
+        message: "Would you like to confirm your order?",
+        type: "options",
+        options: { yes: "process_payment", no: "welcome" }
+    },
+    process_payment: {
+        message: "Thank you for your order! Your payment has been processed.",
+        type: "end",
+        options: { ok: "goodbye" }
+    },
+    goodbye: {
+        message: "Thank you for choosing our Candle Gifting Company. Have a wonderful day!",
+        type: "end"
+    }
+};
+
+let currentStep = "start";
+let orderSummary = "";
+
+function renderStep(step) {
+    const chatbotBody = document.getElementById('chatbot-body');
+    chatbotBody.innerHTML = '';
+
+    const message = document.createElement('div');
+    message.textContent = chatData[step].message;
+    chatbotBody.appendChild(message);
+
+    if (chatData[step].type === "options") {
+        Object.keys(chatData[step].options).forEach(option => {
+            const button = document.createElement('button');
+            button.textContent = option;
+            button.onclick = () => {
+                const nextStep = chatData[step].options[option];
+                currentStep = nextStep;
+                renderStep(currentStep);
+            };
+            chatbotBody.appendChild(button);
+        });
+    } else if (chatData[step].type === "input") {
+        const input = document.createElement('input');
+        input.type = 'text';
+        chatbotBody.appendChild(input);
+
+        const button = document.createElement('button');
+        button.textContent = 'Submit';
+        button.onclick = () => {
+            const userInput = input.value.trim();
+            if (userInput) {
+                if (currentStep === "start_order" && userInput.toLowerCase() !== 'done') {
+                    orderSummary += userInput + ", ";
+                } else if (currentStep === "start_order" && userInput.toLowerCase() === 'done') {
+                    currentStep = "confirm_order";
+                } else if (currentStep === "add_message") {
+                    orderSummary += "\nGift Message: " + userInput;
+                    currentStep = "delivery_address";
+                } else if (currentStep === "delivery_address") {
+                    orderSummary += "\nDelivery Address: " + userInput;
+                    currentStep = "finalize_order";
+                } else {
+                    currentStep = chatData[step].next_state;
+                }
+                renderStep(currentStep);
+            }
+        };
+        chatbotBody.appendChild(button);
+    } else if (chatData[step].type === "display") {
+        const orderSummaryDiv = document.createElement('div');
+        orderSummaryDiv.textContent = orderSummary;
+        chatbotBody.appendChild(orderSummaryDiv);
+
+        const nextStep = chatData[step].next_state;
+        const button = document.createElement('button');
+        button.textContent = 'Next';
+        button.onclick = () => {
+            currentStep = nextStep;
+            renderStep(currentStep);
+        };
+        chatbotBody.appendChild(button);
+    } else if (chatData[step].type === "end") {
+        const message = document.createElement('div');
+        message.textContent = chatData[step].message;
+        chatbotBody.appendChild(message);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderStep(currentStep);
+});
+
+
+    </script>
+</body>
+</html>

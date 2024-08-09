@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Candle Gifting Company Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .card {
+            border-radius: 1rem;
+            background-color: #f8f8f8;
+            padding: 1rem;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+            margin: 1rem;
+            width: 300px;
+        }
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <div id="chat-container" class="card-container"></div>
+    </div>
+
+    <script>
+        class Chatbot {
+            constructor() {
+                this.menu = {
+                    "lavender dreams": { "price": 15.99 },
+                    "vanilla bliss": { "price": 14.99 },
+                    "ocean breeze": { "price": 16.99 },
+                    "cinnamon spice": { "price": 15.99 },
+                    "forest pine": { "price": 17.99 },
+                    "gift box": { "price": 5.00 },
+                };
+
+                this.states = {
+                    "welcome": {
+                        "message": "Welcome to our Candle Gifting Company! How can I assist you today?",
+                        "type": "input",
+                        "options": {
+                            "order": "start_order",
+                            "catalog": "show_catalog",
+                            "exit": "goodbye",
+                        },
+                    },
+                    "show_catalog": {
+                        "message": this.generateCatalogMessage(),
+                        "type": "input",
+                        "options": null,
+                    },
+                    "start_order": {
+                        "message": "Great! What candles would you like to order? (Type 'done' when finished)",
+                        "type": "order",
+                        "options": null,
+                    },
+                    "confirm_order": {
+                        "message": "Here's your order summary:",
+                        "type": "display",
+                        "next_state": "gift_message",
+                    },
+                    "gift_message": {
+                        "message": "Would you like to add a gift message?",
+                        "type": "input",
+                        "options": { "yes": "add_message", "no": "delivery_address" },
+                    },
+                    "add_message": {
+                        "message": "Please enter your gift message:",
+                        "type": "input",
+                        "options": null,
+                    },
+                    "delivery_address": {
+                        "message": "Please provide your delivery address:",
+                        "type": "input",
+                        "options": null,
+                    },
+                    "finalize_order": {
+                        "message": "Would you like to confirm your order?",
+                        "type": "input",
+                        "options": { "yes": "process_payment", "no": "welcome" },
+                    },
+                    "process_payment": {
+                        "message": "Thank you for your order! Your payment has been processed.",
+                        "type": "display",
+                        "options": { "ok": "goodbye" },
+                    },
+                    "goodbye": {
+                        "message": "Thank you for choosing our Candle Gifting Company. Have a wonderful day!",
+                        "type": "end",
+                    },
+                };
+
+                this.current_state = "welcome";
+                this.order = {};
+                this.total = 0;
+                this.gift_message = "";
+                this.delivery_address = {};
+
+                this.run();
+            }
+
+            generateCatalogMessage() {
+                const catalogItems = Object.entries(this.menu).map(
+                    ([item, details]) => `${item.charAt(0).toUpperCase() + item.slice(1)}: $${details.price.toFixed(2)}`
+                ).join("<br>");
+                return `Here's our candle catalog:<br>${catalogItems}<br><br>What would you like to do?`;
+            }
+
+            run() {
+                const state = this.states[this.current_state];
+                this.displayCard(state.message, state.options, state.type);
+                if (state.type === "end") return;
+            }
+
+            displayCard(message, options, type) {
+                const chatContainer = document.getElementById("chat-container");
+                const cardElement = document.createElement("div");
+                cardElement.className = "card p-4 mb-4 bg-white shadow-md rounded";
+                const messageElement = document.createElement("div");
+                messageElement.innerHTML = message;
+
+                cardElement.appendChild(messageElement);
+
+                if (options) {
+                    const optionsContainer = document.createElement("div");
+                    optionsContainer.className = "mt-4";
+                    for (const [option, nextState] of Object.entries(options)) {
+                        const button = document.createElement("button");
+                        button.className = "bg-green-500 text-white px-4 py-2 mt-2 rounded mr-2";
+                        button.textContent = option.charAt(0).toUpperCase() + option.slice(1);
+                        button.onclick = () => {
+                            this.current_state = nextState;
+                            this.run();
+                        };
+                        optionsContainer.appendChild(button);
+                    }
+                    cardElement.appendChild(optionsContainer);
+                } else if (type === "input" || type === "order" || type === "address") {
+                    const inputElement = document.createElement("input");
+                    inputElement.type = "text";
+                    inputElement.className = "mt-4 p-2 border rounded w-full";
+                    inputElement.placeholder = "Type your answer...";
+                    const submitButton = document.createElement("button");
+                    submitButton.className = "bg-blue-500 text-white px-4 py-2 mt-2 rounded w-full";
+                    submitButton.textContent = "Submit";
+                    submitButton.onclick = () => {
+                        this.processInput(inputElement.value.trim().toLowerCase());
+                        inputElement.value = "";
+                    };
+                    cardElement.appendChild(inputElement);
+                    cardElement.appendChild(submitButton);
+                }
+
+                chatContainer.appendChild(cardElement);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            processInput(input) {
+                const state = this.states[this.current_state];
+                if (this.current_state === "start_order") {
+                    if (input === "done") {
+                        this.displayOrderSummary();
+                    } else if (this.menu[input]) {
+                        const quantity = prompt(`How many ${input} candles would you like?`);
+                        if (!isNaN(quantity) && quantity > 0) {
+                            this.order[input] = (this.order[input] || 0) + parseInt(quantity);
+                            this.total += this.menu[input].price * quantity;
+                            alert(`${quantity} ${input} candle(s) added to your order.`);
+                        } else {
+                            alert("Invalid quantity. Please try again.");
+                        }
+                    } else {
+                        alert("Invalid item. Please try again or type 'done' to finish ordering.");
+                    }
+                    this.run();
+                } else if (state.type === "input" || state.type === "address") {
+                    if (this.current_state === "add_message") {
+                        this.gift_message = input;
+                        this.current_state = "delivery_address";
+                    } else if (this.current_state === "delivery_address") {
+                        this.delivery_address = {
+                            name: input,
+                            street: prompt("Street Address:"),
+                            city: prompt("City:"),
+                            state: prompt("State:"),
+                            zip: prompt("ZIP Code:"),
+                            country: prompt("Country:")
+                        };
+                        this.current_state = "finalize_order";
+                    } else if (this.current_state === "show_catalog") {
+                        this.current_state = "start_order";
+                    } else {
+                        this.current_state = this.states[this.current_state].options[input] || this.current_state;
+                    }
+                    this.run();
+                } else if (this.current_state === "finalize_order") {
+                    if (input === "yes") {
+                        this.current_state = "process_payment";
+                    } else if (input === "no") {
+                        this.current_state = "welcome";
+                    }
+                    this.run();
+                }
+            }
+
+            displayOrderSummary() {
+                let summary = "";
+                for (const [item, quantity] of Object.entries(this.order)) {
+                    summary += `${item.charAt(0).toUpperCase() + item.slice(1)}: ${quantity} x $${this.menu[item].price.toFixed(2)}<br>`;
+                }
+                summary += `<br>Total: $${this.total.toFixed(2)}`;
+                this.states.confirm_order.message = `Here's your order summary:<br>${summary}`;
+                this.current_state = "gift_message"; // Transition to gift_message state after displaying summary
+                this.run();
+            }
+        }
+
+        // Initialize and run the chatbot
+        const chatbot = new Chatbot();
+    </script>
+</body>
+
+</html>

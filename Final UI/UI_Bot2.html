@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot-like User Information</title>
+
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #d7d9d7;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    max-width: 1400px;
+    background-color: white;
+    
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chat-section {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    grid-gap: 20px;
+    background-color: #ffffff;
+    max-height: 80vh; /* Adjust this value as needed */
+    overflow-y: auto;
+}
+
+.info-field {
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.value {
+    margin-top: 5px;
+}
+
+.side-section {
+    /* flex: 0 0 30%; */
+    background-color: #f7f7f7;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.top-buttons, .bottom-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.side-section input[type="text"], .side-section button {
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.side-section input[type="text"] {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+}
+.side-section input, .side-section button {
+    padding: 10px;
+    background-color: #3a63d4;
+    border-radius: 1px solid #ccc;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+}
+
+
+::placeholder {
+  color: rgb(50, 77, 186);
+  opacity: 1; /* Firefox */
+}
+
+
+
+.side-section input {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.side-section button:hover {
+    background-color: #7da7e6;
+    color: black;
+}
+
+.bottom-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        height: 46rem;
+        overflow:inherit;
+        max-height:fit-content;
+
+    }
+
+    .side-section {
+        flex: 1;
+        text-align: center;
+    }
+
+    .chat-section {
+        padding: 10px;
+        display: block;
+    }
+
+    .bottom-buttons {
+        flex-direction: row;
+    }
+
+}
+
+</style>
+<body>
+    <div class="container">
+        <div class="chat-section">
+            <div class="info-field">
+                <span class="label">Name:</span>
+                <span class="value" id="name">John Doe</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Age:</span>
+                <span class="value" id="age">30</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Address:</span>
+                <span class="value" id="address">Warje Pune</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Company Name:</span>
+                <span class="value" id="address">Upsolve</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Industry:</span>
+                <span class="value" id="address">Information Technology</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Location:</span>
+                <span class="value" id="address">Mumbai</span>
+            </div>
+    
+            <div class="info-field">
+                <span class="label">Description:</span>
+                <span class="value" id="address">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quam eaque autem earum praesentium magni exercitationem, minus odio esse! Fuga ea illo praesentium dicta distinctio ab repudiandae quibusdam voluptatibus libero commodi.
+                Explicabo voluptas qui error vitae blanditiis facilis vel ipsum, nulla possimus ratione reprehenderit consequuntur ea alias, quis iure illo quidem accusamus! Magni ipsum aspernatur harum eum deserunt perspiciatis doloremque! Error.
+                Nostrum voluptatibus nobis numquam nihil dolorem molestiae error doloremque possimus deleniti! Beatae aspernatur ullam tempore suscipit rerum officia quia placeat laudantium, neque repudiandae expedita rem deserunt? Aliquam expedita vel nemo?
+                Necessitatibus odit praesentium eius accusamus facilis autem dolores officia perspiciatis illum placeat at odio, iusto soluta inventore quo ipsam delectus blanditiis ad, modi fugit id? Odio tempora quam eaque quis.
+                Deserunt nam illum ea nemo exercitationem dicta nulla delectus ipsum porro! Cupiditate aliquid aut porro, laudantium at rerum voluptatibus eligendi impedit? Rerum facilis provident fugit quaerat adipisci cumque perspiciatis reprehenderit.
+                Doloribus voluptas harum deserunt rem est quis exercitationem blanditiis nemo. Dolorum mollitia error accusantium debitis, fugiat modi eius ex. Architecto quia qui quam, aut consectetur amet? Optio eveniet voluptates commodi?    
+                </span>
+            </div>
+        </div>
+        <div class="side-section">
+            <div class="top-buttons">
+                <input type="text" id="searchField" placeholder="Search by name...">
+                <button id="searchBtn">Search</button>
+                <button id="printBtn">Print</button>
+            </div>
+            <div class="bottom-buttons">
+                <button id="prevBtn">Previous</button>
+                <button id="nextBtn">Next</button>
+                <button id="editBtn">Edit</button>
+                <button id="saveBtn" style="display:none;">Save</button>
+            </div>
+        </div>
+    </div>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const searchBtn = document.getElementById('searchBtn');
+    const printBtn = document.getElementById('printBtn');
+    const searchField = document.getElementById('searchField');
+    const userInfoFields = {
+        name: document.getElementById('name'),
+        age: document.getElementById('age'),
+        address: document.getElementById('address')
+    };
+
+    let currentUserIndex = 0;
+    let users = [];
+
+    // Fetch user data (placeholder example)
+    async function fetchUsers() {
+        users = [
+            { name: 'John Doe', age: 30, address: '123 Main St' },
+            { name: 'Jane Smith', age: 25, address: '456 Maple Ave' },
+            // Add more users as needed
+        ];
+        displayUser(currentUserIndex);
+    }
+
+    function displayUser(index) {
+        if (users[index]) {
+            userInfoFields.name.textContent = users[index].name;
+            userInfoFields.age.textContent = users[index].age;
+            userInfoFields.address.textContent = users[index].address;
+        }
+    }
+
+    function makeFieldsEditable() {
+        for (let key in userInfoFields) {
+            let value = userInfoFields[key].textContent;
+            userInfoFields[key].innerHTML = `<input type="text" value="${value}" class="editable">`;
+        }
+        editBtn.style.display = 'none';
+        saveBtn.style.display = 'block';
+    }
+
+    function saveUser() {
+        const updatedUser = {
+            name: userInfoFields.name.querySelector('input').value,
+            age: userInfoFields.age.querySelector('input').value,
+            address: userInfoFields.address.querySelector('input').value
+        };
+
+        users[currentUserIndex] = updatedUser;
+        displayUser(currentUserIndex);
+
+        saveBtn.style.display = 'none';
+        editBtn.style.display = 'block';
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentUserIndex > 0) {
+            currentUserIndex--;
+            displayUser(currentUserIndex);
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentUserIndex < users.length - 1) {
+            currentUserIndex++;
+            displayUser(currentUserIndex);
+        }
+    });
+
+    editBtn.addEventListener('click', makeFieldsEditable);
+
+    saveBtn.addEventListener('click', () => {
+        saveUser();
+        alert('User information saved!');
+    });
+
+    searchBtn.addEventListener('click', () => {
+        const query = searchField.value.toLowerCase();
+        const index = users.findIndex(user => user.name.toLowerCase().includes(query));
+        if (index !== -1) {
+            currentUserIndex = index;
+            displayUser(currentUserIndex);
+        } else {
+            alert('User not found!');
+        }
+    });
+
+    printBtn.addEventListener('click', () => {
+        window.print();
+    });
+
+    // Initial fetch
+    fetchUsers();
+});
+
+    </script>
+</body>
+</html>

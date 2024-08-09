@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot-like User Information</title>
+</head>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.container {
+    display: flex;
+    width: 80%;
+    height: 80%;
+    max-width: 1200px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.chat-section {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: #f9f9f9;
+}
+
+.info-field {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.label {
+    font-weight: bold;
+}
+
+.value {
+    margin-top: 5px;
+    padding: 10px;
+    background-color: #ececec;
+    border-radius: 5px;
+}
+
+.side-section {
+    flex: 0 0 30%;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.top-buttons, .bottom-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.side-section input, .side-section button {
+    padding: 10px;
+    background-color: #555;
+    border: none;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+}
+
+.side-section input {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.side-section button:hover {
+    background-color: #777;
+}
+
+.bottom-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .side-section {
+        flex: 1;
+        text-align: center;
+    }
+
+    .chat-section {
+        padding: 10px;
+    }
+
+    .bottom-buttons {
+        flex-direction: column;
+    }
+}
+
+</style>
+<body>
+    <div class="container">
+        <div class="chat-section">
+            <div class="info-field">
+                <span class="label">Name:</span>
+                <span class="value" id="name">John Doe</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Age:</span>
+                <span class="value" id="age">30</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Address:</span>
+                <span class="value" id="address">123 Main St</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Address:</span>
+                <span class="value" id="address" >123 Main St</span>
+            </div>
+            <!-- <div class="info-field">
+                <span class="label">Address:</span>
+                <span class="value" id="address">123 Main St</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Address:</span>
+                <span class="value" id="address">123 Main St</span>
+            </div>
+            <div class="info-field">
+                <span class="label">Address:</span>
+                <span class="value" id="address">123 Main St</span>
+            </div> -->
+        </div>
+        <div class="side-section">
+            <div class="top-buttons">
+                <input type="text" id="searchField" placeholder="Search by name...">
+                <button id="searchBtn">Search</button>
+                <button id="printBtn">Print</button>
+            </div>
+            <div class="bottom-buttons">
+                <button id="prevBtn">Previous</button>
+                <button id="nextBtn">Next</button>
+                <button id="editBtn">Edit</button>
+                <button id="saveBtn" style="display:none;">Save</button>
+            </div>
+        </div>
+    </div>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const editBtn = document.getElementById('editBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const searchBtn = document.getElementById('searchBtn');
+    const printBtn = document.getElementById('printBtn');
+    const searchField = document.getElementById('searchField');
+    const userInfoFields = {
+        name: document.getElementById('name'),
+        age: document.getElementById('age'),
+        address: document.getElementById('address')
+    };
+
+    let currentUserIndex = 0;
+    let users = [];
+
+    // Fetch user data from backend (this is just a placeholder example)
+    async function fetchUsers() {
+        // Replace with actual backend call
+        users = [
+            { name: 'John Doe', age: 30, address: '123 Main St' },
+            { name: 'Jane Smith', age: 25, address: '456 Maple Ave' },
+            // Add more users as needed
+        ];
+        displayUser(currentUserIndex);
+    }
+
+    function displayUser(index) {
+        if (users[index]) {
+            userInfoFields.name.textContent = users[index].name;
+            userInfoFields.age.textContent = users[index].age;
+            userInfoFields.address.textContent = users[index].address;
+        }
+    }
+
+    function makeFieldsEditable() {
+        for (let key in userInfoFields) {
+            let value = userInfoFields[key].textContent;
+            userInfoFields[key].innerHTML = `<input type="text" value="${value}" class="editable">`;
+        }
+        editBtn.style.display = 'none';
+        saveBtn.style.display = 'block';
+    }
+
+    function saveUser() {
+        users[currentUserIndex].name = userInfoFields.name.querySelector('input').value;
+        users[currentUserIndex].age = userInfoFields.age.querySelector('input').value;
+        users[currentUserIndex].address = userInfoFields.address.querySelector('input').value;
+        displayUser(currentUserIndex);
+        saveBtn.style.display = 'none';
+        editBtn.style.display = 'block';
+        // Add backend save logic here
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentUserIndex > 0) {
+            currentUserIndex--;
+            displayUser(currentUserIndex);
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentUserIndex < users.length - 1) {
+            currentUserIndex++;
+            displayUser(currentUserIndex);
+        }
+    });
+
+    editBtn.addEventListener('click', makeFieldsEditable);
+
+    saveBtn.addEventListener('click', () => {
+        saveUser();
+        alert('User information saved!');
+    });
+
+    searchBtn.addEventListener('click', () => {
+        const query = searchField.value.toLowerCase();
+        const index = users.findIndex(user => user.name.toLowerCase().includes(query));
+        if (index !== -1) {
+            currentUserIndex = index;
+            displayUser(currentUserIndex);
+        } else {
+            alert('User not found!');
+        }
+    });
+
+    printBtn.addEventListener('click', () => {
+        window.print();
+    });
+
+    // Initial fetch
+    fetchUsers();
+});
+
+
+    </script>
+</body>
+</html>

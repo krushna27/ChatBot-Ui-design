@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Order Chatbot</title>
+    <style>
+        /* Basic styling for the chatbot */
+        #chatbox {
+            width: 400px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 0 auto;
+            margin-top: 50px;
+        }
+        .message {
+            margin: 10px 0;
+        }
+        .button {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .section {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        #order-summary {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <!-- Language Selection Section -->
+        <div id="language-section" class="section">
+            <div class="message">Welcome! Please select your language:</div>
+            <button class="button" onclick="selectLanguage('English')">English</button>
+            <button class="button" onclick="selectLanguage('Hindi')">Hindi</button>
+        </div>
+
+        <!-- Options Section -->
+        <div id="options-section" class="section">
+            <!-- Content will be dynamically populated by JavaScript -->
+        </div>
+
+        <!-- Coffee Type Selection Section -->
+        <div id="coffee-type-section" class="section">
+            <!-- Content will be dynamically populated by JavaScript -->
+        </div>
+
+        <!-- Coffee Selection Section -->
+        <div id="coffee-selection-section" class="section">
+            <!-- Content will be dynamically populated by JavaScript -->
+        </div>
+
+        <!-- Order Confirmation Section -->
+        <div id="order-confirmation-section" class="section">
+            <!-- Content will be dynamically populated by JavaScript -->
+        </div>
+
+        <!-- Address Entry Section -->
+        <div id="address-entry-section" class="section">
+            <!-- Content will be dynamically populated by JavaScript -->
+        </div>
+
+        <!-- Final Confirmation Section -->
+        <div id="final-confirmation-section" class="section">
+            <!-- Content will be dynamically populated by JavaScript -->
+        </div>
+
+        <!-- Order Summary Section -->
+        <div id="order-summary">
+            <h3>Order Summary</h3>
+            <div id="order-details"></div>
+        </div>
+    </div>
+
+    <script>
+        let language = 'English';
+        let order = [];
+
+        const messages = {
+            English: {
+                welcome: 'Welcome! Please select an option:',
+                order: 'Order',
+                coffeeList: 'Coffee List',
+                exit: 'Exit',
+                coldCoffeeList: 'Cold Coffee List:',
+                hotCoffeeList: 'Hot Coffee List:',
+                addedToOrder: 'added to order. Please enter quantity:',
+                confirm: 'Confirm',
+                enterAddress: 'added to order. Please enter your address:',
+                finalizeOrder: 'Finalize Order',
+                thankYou: 'Order confirmed. It will be delivered to',
+                thankYouMessage: 'Thank you! Have a nice day!',
+                back: 'Back',
+            },
+            Hindi: {
+                welcome: 'स्वागत है! कृपया एक विकल्प चुनें:',
+                order: 'ऑर्डर',
+                coffeeList: 'कॉफी सूची',
+                exit: 'बाहर निकलें',
+                coldCoffeeList: 'ठंडी कॉफी सूची:',
+                hotCoffeeList: 'गर्म कॉफी सूची:',
+                addedToOrder: 'ऑर्डर में जोड़ा गया। कृपया मात्रा दर्ज करें:',
+                confirm: 'पुष्टि करें',
+                enterAddress: 'ऑर्डर में जोड़ा गया। कृपया अपना पता दर्ज करें:',
+                finalizeOrder: 'ऑर्डर को अंतिम रूप दें',
+                thankYou: 'ऑर्डर की पुष्टि हो गई है। यह पर डिलीवर किया जाएगा।',
+                thankYouMessage: 'धन्यवाद! आपका दिन शुभ हो!',
+                back: 'वापस',
+            }
+        };
+
+        // Function to show a specific section and hide others
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        // Function to select language and show options section
+        function selectLanguage(lang) {
+            language = lang;
+            showSection('options-section');
+            let optionsSection = document.getElementById('options-section');
+            optionsSection.innerHTML = `
+                <div class="message">${messages[language].welcome}</div>
+                <button class="button" onclick="selectOption('Order')">${messages[language].order}</button>
+                <button class="button" onclick="selectOption('Coffee List')">${messages[language].coffeeList}</button>
+                <button class="button" onclick="selectOption('Exit')">${messages[language].exit}</button>
+            `;
+        }
+
+        // Function to handle option selection
+        function selectOption(option) {
+            if (option === 'Coffee List') {
+                showSection('coffee-type-section');
+                let coffeeTypeSection = document.getElementById('coffee-type-section');
+                coffeeTypeSection.innerHTML = `
+                    <button class="button" onclick="selectCoffeeType('Cold')">Cold</button>
+                    <button class="button" onclick="selectCoffeeType('Hot')">Hot</button>
+                    <button class="button" onclick="goBack('options-section')">${messages[language].back}</button>
+                `;
+            } else if (option === 'Exit') {
+                showSection('final-confirmation-section');
+                let finalConfirmationSection = document.getElementById('final-confirmation-section');
+                finalConfirmationSection.innerHTML = `<div class="message">${messages[language].thankYouMessage}</div>`;
+            }
+        }
+
+        // Function to handle coffee type selection
+        function selectCoffeeType(type) {
+            showSection('coffee-selection-section');
+            let coffeeSelectionSection = document.getElementById('coffee-selection-section');
+            if (type === 'Cold') {
+                coffeeSelectionSection.innerHTML = `
+                    <div class="message">${messages[language].coldCoffeeList}</div>
+                    <button class="button" onclick="addToOrder('Cold Coffee 1')">Cold Coffee 1</button>
+                    <button class="button" onclick="addToOrder('Cold Coffee 2')">Cold Coffee 2</button>
+                    <button class="button" onclick="goBack('coffee-type-section')">${messages[language].back}</button>
+                `;
+            } else if (type === 'Hot') {
+                coffeeSelectionSection.innerHTML = `
+                    <div class="message">${messages[language].hotCoffeeList}</div>
+                    <button class="button" onclick="addToOrder('Hot Coffee 1')">Hot Coffee 1</button>
+                    <button class="button" onclick="addToOrder('Hot Coffee 2')">Hot Coffee 2</button>
+                    <button class="button" onclick="goBack('coffee-type-section')">${messages[language].back}</button>
+                `;
+            }
+        }
+
+        // Function to handle adding coffee to order
+        function addToOrder(coffee) {
+            showSection('order-confirmation-section');
+            let orderConfirmationSection = document.getElementById('order-confirmation-section');
+            orderConfirmationSection.innerHTML = `
+                <div class="message">${coffee} ${messages[language].addedToOrder}</div>
+                <input type="number" id="quantity" min="1" value="1">
+                <button class="button" onclick="confirmOrder('${coffee}')">${messages[language].confirm}</button>
+                <button class="button" onclick="goBack('coffee-selection-section')">${messages[language].back}</button>
+            `;
+        }
+
+        // Function to handle confirming order quantity
+        function confirmOrder(coffee) {
+            let quantity = document.getElementById('quantity').value;
+            order.push({ coffee, quantity });
+            updateOrderSummary();
+            showSection('address-entry-section');
+            let addressEntrySection = document.getElementById('address-entry-section');
+            addressEntrySection.innerHTML = `
+                <div class="message">${quantity} ${coffee}(s) ${messages[language].enterAddress}</div>
+                <input type="text" id="address">
+                <button class="button" onclick="finalizeOrder()">${messages[language].finalizeOrder}</button>
+                <button class="button" onclick="goBack('order-confirmation-section')">${messages[language].back}</button>
+            `;
+        }
+
+        // Function to handle finalizing order
+        function finalizeOrder() {
+            let address = document.getElementById('address').value;
+            showSection('final-confirmation-section');
+            let finalConfirmationSection = document.getElementById('final-confirmation-section');
+            finalConfirmationSection.innerHTML = `
+                <div class="message">${messages[language].thankYou} ${address}. ${messages[language].thankYouMessage}</div>
+            `;
+        }
+
+        // Function to update order summary
+        function updateOrderSummary() {
+            let orderDetails = document.getElementById('order-details');
+            orderDetails.innerHTML = order.map(item => `${item.quantity} x ${item.coffee}`).join('<br>');
+        }
+
+        // Function to go back to previous section
+        function goBack(sectionId) {
+            showSection(sectionId);
+        }
+
+        // Initial display
+        showSection('language-section');
+    </script>
+</body>
+</html>
+
